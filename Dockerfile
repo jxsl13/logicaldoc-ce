@@ -4,7 +4,13 @@ FROM openjdk:10-jdk
 MAINTAINER LogicalDOC <packagers@logicaldoc.com>
 
 # set default variables for LogicalDOC install
-ENV LDOC_VERSION="7.7.6"
+
+# go to: https://sourceforge.net/projects/logicaldoc/files/distribution/
+# enter the latest version's folder and enter the zip archive's full
+# version number in here.
+# This parameter expects the format X.X.X(8.0.0 or 7.7.6) and not X.X(8.0)
+ENV LDOC_VERSION="8.0.0"
+
 ENV LDOC_MEMORY="2000"
 ENV DEBIAN_FRONTEND="noninteractive"
 ENV CATALINA_HOME="/opt/logicaldoc/tomcat"
@@ -14,7 +20,7 @@ ENV DB_PORT="3306"
 ENV DB_NAME="logicaldoc"
 ENV DB_INSTANCE=""
 ENV DB_USER="ldoc"
-ENV DB_PASSWORD="changeme"
+ENV DB_PASSWORD="SECRET_PASSWORD"
 ENV DB_MANUALURL="false"
 
 
@@ -42,7 +48,9 @@ RUN apt-get -y install \
     nano
 
 # Download and unzip LogicalDOC CE installer 
-RUN curl -L https://sourceforge.net/projects/logicaldoc/files/distribution/LogicalDOC%20CE%207.7/logicaldoc-community-installer-${LDOC_VERSION}.zip/download \
+# First variable insersion removes the minor bugfix part of the version number
+# format changes from X.X.X to X.X
+RUN curl -L https://sourceforge.net/projects/logicaldoc/files/distribution/LogicalDOC%20CE%20${LDOC_VERSION%.*}/logicaldoc-community-installer-${LDOC_VERSION}.zip/download \
     -o /opt/logicaldoc/logicaldoc-community-installer-${LDOC_VERSION}.zip && \
     unzip /opt/logicaldoc/logicaldoc-community-installer-${LDOC_VERSION}.zip -d /opt/logicaldoc && \
     rm /opt/logicaldoc/logicaldoc-community-installer-${LDOC_VERSION}.zip
